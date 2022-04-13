@@ -96,26 +96,25 @@ if __name__ == "__main__":
             'z_spacing': 1,
         },
     }
-    
-    ModelType=input('1.VIT-B-16  2.VIT-B-32  3.VIT-L-16  4.R50-VIT-B-16:')
-    IntMT=int(ModelType)
-    if IntMT == 1:
-      args.vit_name='ViT-B_16'
-      args.vit_patches_size=16
-    elif IntMT==2:
-      args.vit_name='ViT-B_32'
-      args.vit_patches_size=32
-    elif IntMT==3:
-      args.vit_name='ViT-L_16'
-      args.vit_patches_size=16
-    elif IntMT==4:
-      args.vit_name='R50-ViT-B_16'
-      args.vit_patches_size=16
-     
     UseGoogle=input('要使用谷歌预训练模块吗？ 1.使用 2.不使用')
     UseG=int(UseGoogle)
     if UseG==1:
       args.GoogleUse=True 
+      ModelType=input('1.VIT-B-16  2.VIT-B-32  3.VIT-L-16  4.R50-VIT-B-16:')
+      IntMT=int(ModelType)
+      if IntMT == 1:
+        args.vit_name='ViT-B_16'
+        args.vit_patches_size=16
+      elif IntMT==2:
+        args.vit_name='ViT-B_32'
+        args.vit_patches_size=32
+      elif IntMT==3:
+        args.vit_name='ViT-L_16'
+        args.vit_patches_size=16
+      elif IntMT==4:
+        args.vit_name='R50-ViT-B_16'
+        args.vit_patches_size=16
+     
       
     dataset_name = args.dataset
     args.num_classes = dataset_config[dataset_name]['num_classes']
@@ -150,12 +149,13 @@ if __name__ == "__main__":
     if args.GoogleUse==False:
        if args.vit_name.find('R50') !=-1:
         config_vit.patches.grid = (int(args.img_size/args.vit_patches_size), int(args.img_size/args.vit_patches_size))
-    net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
+       net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
        snapshot = os.path.join(snapshot_path, 'best_model.pth')
        if not os.path.exists(snapshot): snapshot = snapshot.replace('best_model', 'epoch_'+str(args.max_epochs-1))
        snapshot_name = snapshot_path.split('/')[-1]
        net.load_state_dict(torch.load(snapshot))
     else:
+       net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
        net.load_from(weights=np.load(config_vit.pretrained_path))
        snapshot_name = args.vit_name
 
