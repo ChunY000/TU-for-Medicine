@@ -45,6 +45,7 @@ def get_r50_b16_config():
     config = get_b16_config()
     config.patches.grid = (16, 16)
     config.resnet = ml_collections.ConfigDict()
+    #层数=（3+4+9）×3+conv1的两层=50
     config.resnet.num_layers = (3, 4, 9)
     config.resnet.width_factor = 1
 
