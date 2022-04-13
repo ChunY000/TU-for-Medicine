@@ -103,7 +103,7 @@ if __name__ == "__main__":
       args.vit_name='R50-ViT-B_16'
       args.vit_patches_size=16
      
-    UseGoogle=input('1.使用 2.不使用')
+    UseGoogle=input('要使用谷歌预训练模块吗？ 1.使用 2.不使用')
     UseG=int(UseGoogle)
     if UseG==1:
       args.GoogleUse=True 
@@ -115,14 +115,10 @@ if __name__ == "__main__":
     args.list_dir = dataset_config[dataset_name]['list_dir']
     args.z_spacing = dataset_config[dataset_name]['z_spacing']
     args.is_pretrain = True
+    args.exp = 'TU_' + dataset_name + str(args.img_size)
     
-    if args.GoogleUse:
-       snapshot_path='/content/gdrive/MyDrive/TransUnet_Chy/model/GoogleModel'
-       snapshot=snapshot_path+'/{}'.format(args.vit_name)
-        
-    else:
+    if args.GoogleUse==False:
     # name the same snapshot defined in train script!
-       args.exp = 'TU_' + dataset_name + str(args.img_size)
        snapshot_path = "/content/TransUNet/model/{}/{}".format(args.exp, 'TU')
        snapshot_path = snapshot_path + '_pretrain' if args.is_pretrain else snapshot_path
        snapshot_path += '_' + args.vit_name
@@ -140,16 +136,19 @@ if __name__ == "__main__":
     config_vit.n_classes = args.num_classes
     config_vit.n_skip = args.n_skip
     config_vit.patches.size = (args.vit_patches_size, args.vit_patches_size)
-    if args.vit_name.find('R50') !=-1:
-        config_vit.patches.grid = (int(args.img_size/args.vit_patches_size), int(args.img_size/args.vit_patches_size))
-    net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
+   
 
     if args.GoogleUse==False:
+       if args.vit_name.find('R50') !=-1:
+        config_vit.patches.grid = (int(args.img_size/args.vit_patches_size), int(args.img_size/args.vit_patches_size))
+    net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
        snapshot = os.path.join(snapshot_path, 'best_model.pth')
        if not os.path.exists(snapshot): snapshot = snapshot.replace('best_model', 'epoch_'+str(args.max_epochs-1))
        snapshot_name = snapshot_path.split('/')[-1]
-    net.load_state_dict(torch.load(snapshot))
-    snapshot_name = args.vit_name
+       net.load_state_dict(torch.load(snapshot))
+    else:
+       net.load_from(weights=np.load(config_vit.pretrained_path))
+       snapshot_name = args.vit_name
 
     log_folder = '/content/TransUNet/Test_outputs/test_log' + args.exp
     os.makedirs(log_folder, exist_ok=True)
