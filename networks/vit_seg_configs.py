@@ -20,7 +20,7 @@ def get_b16_config():
 
     config.decoder_channels = (256, 128, 64, 16)
     config.n_classes = 2
-    config.n_skip = None
+    config.n_skip = 0
     config.activation = 'softmax'
     return config
 
@@ -65,7 +65,6 @@ def get_b32_config():
     config = get_b16_config()
     config.patches.size = (32, 32)
     config.pretrained_path = '/content/TransUNet/model/GoogleModel/ViT-B_32.npz'
-    config.n_skip = None
     return config
 
 
@@ -88,7 +87,7 @@ def get_l16_config():
     config.pretrained_path = '/content/TransUNet/model/GoogleModel/ViT-L_16.npz'
     config.decoder_channels = (256, 128, 64, 16)
     config.n_classes = 2
-    config.n_skip = None
+    config.n_skip = 0
     config.activation = 'softmax'
     return config
 
@@ -106,7 +105,6 @@ def get_r50_l16_config():
     config.decoder_channels = (256, 128, 64, 16)
     config.skip_channels = [512, 256, 64, 16]
     config.n_classes = 2
-    config.n_skip = None
     config.activation = 'softmax'
     return config
 
@@ -115,7 +113,6 @@ def get_l32_config():
     """Returns the ViT-L/32 configuration."""
     config = get_l16_config()
     config.patches.size = (32, 32)
-    config.n_skip = None
     return config
 
 
