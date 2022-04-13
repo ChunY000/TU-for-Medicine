@@ -32,7 +32,7 @@ parser.add_argument('--img_size', type=int, default=224, help='input patch size 
 parser.add_argument('--is_savenii', action="store_true", help='whether to save results during inference')
 
 parser.add_argument('--n_skip', type=int, default=3, help='using number of skip-connect, default is num')
-parser.add_argument('--vit_name', type=str, default='ViT-B_16', help='select one vit model')
+parser.add_argument('--vit_name', type=str, default='R50-ViT-B_16', help='select one vit model')
 
 parser.add_argument('--test_save_dir', type=str, default='../predictions', help='saving prediction as nii!')
 parser.add_argument('--deterministic', type=int,  default=1, help='whether use deterministic training')
