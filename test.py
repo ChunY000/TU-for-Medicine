@@ -29,7 +29,7 @@ parser.add_argument('--max_epochs', type=int, default=150, help='maximum epoch n
 parser.add_argument('--batch_size', type=int, default=24,
                     help='batch_size per gpu')
 parser.add_argument('--img_size', type=int, default=224, help='input patch size of network input')
-parser.add_argument('--is_savenii', action="store_true", help='whether to save results during inference')
+parser.add_argument('--is_savenii', default=False, help='whether to save results during inference')
 
 parser.add_argument('--n_skip', type=int, default=3, help='using number of skip-connect, default is num')
 parser.add_argument('--vit_name', type=str, default='R50-ViT-B_16', help='select one vit model')
@@ -58,18 +58,19 @@ def inference(args, model, test_save_path=None):
         logging.info('idx %d case %s mean_dice %f mean_hd95 %f' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1]))
         DinaryLoss_path='/content/gdrive/MyDrive/TransUnet_Chy/DinaryLoss/{}.txt'.format(args.vit_name)
         F=open(DinaryLoss_path,'a')
-        F.write('误差数据如下(左边Dice，右边hd95):\n')
-        F.write(str('idx %d case %s mean_dice %f mean_hd95 %f' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1])))
+        if i_batch==0:
+         F.write('误差数据如下(左边Dice，右边hd95):\n')
+        F.write(str('idx %d case %s mean_dice %f mean_hd95 %f\n' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1])))
         
         
     metric_list = metric_list / len(db_test)
     for i in range(1, args.num_classes):
         logging.info('Mean class %d mean_dice %f mean_hd95 %f' % (i, metric_list[i-1][0], metric_list[i-1][1]))
-        F.write(str('Mean class %d mean_dice %f mean_hd95 %f' % (i, metric_list[i-1][0], metric_list[i-1][1])))
+        F.write(str('Mean class %d mean_dice %f mean_hd95 %f\n' % (i, metric_list[i-1][0], metric_list[i-1][1])))
     performance = np.mean(metric_list, axis=0)[0]
     mean_hd95 = np.mean(metric_list, axis=0)[1]
     logging.info('Testing performance in best val model: mean_dice : %f mean_hd95 : %f' % (performance, mean_hd95))
-    F.write(str('Testing performance in best val model: mean_dice : %f mean_hd95 : %f' % (performance, mean_hd95)))
+    F.write(str('Testing performance in best val model: mean_dice : %f mean_hd95 : %f\n' % (performance, mean_hd95)))
     F.close()
     return "Testing Finished!"
 
@@ -114,7 +115,10 @@ if __name__ == "__main__":
       elif IntMT==4:
         args.vit_name='R50-ViT-B_16'
         args.vit_patches_size=16
-     
+    Saveimg=input('要保存图片吗？ 1.保存 2.不保存') 
+    SaveImg=int(Saveimg)
+    if SaveImg==1:
+      args.is_savenii=True
       
     dataset_name = args.dataset
     args.num_classes = dataset_config[dataset_name]['num_classes']
@@ -167,7 +171,7 @@ if __name__ == "__main__":
     logging.info(snapshot_name)
 
     if args.is_savenii:
-        args.test_save_dir = '/content/TransUNet/Test_outputs/predictions'
+        args.test_save_dir = '/content/gdrive/MyDrive/TransUnet_Chy/test_outputs/predictions'
         test_save_path = os.path.join(args.test_save_dir, args.exp, snapshot_name)
         os.makedirs(test_save_path, exist_ok=True)
     else:
