@@ -165,7 +165,7 @@ if __name__ == "__main__":
        net.load_from(weights=np.load(config_vit.pretrained_path))
        snapshot_name = args.vit_name
 
-    log_folder = '/content/TransUNet/Test_outputs/test_log' + args.exp
+    log_folder = '/content/gdrive/MyDrive/TransUnet_Chy/test_outputs/test_log' + args.exp
     os.makedirs(log_folder, exist_ok=True)
     logging.basicConfig(filename=log_folder + '/'+snapshot_name+".txt", level=logging.INFO, format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
