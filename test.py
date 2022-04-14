@@ -40,10 +40,11 @@ parser.add_argument('--base_lr', type=float,  default=0.01, help='segmentation n
 parser.add_argument('--seed', type=int, default=1234, help='random seed')
 parser.add_argument('--vit_patches_size', type=int, default=16, help='vit_patches_size, default is 16')
 parser.add_argument('--GoogleUse', type=bool,default=False, help='Whether or not using the pretrained Models of google')
+parser.add_argument('--Flag32', type=bool,default=False, help='Whether or not using the 32 VIT')
 args = parser.parse_args()
 
 
-def inference(args, model, test_save_path=None):
+def inference(args, model, test_save_path=None,Flag32=False):
     db_test = args.Dataset(base_dir=args.volume_path, split="test_vol", list_dir=args.list_dir)
     testloader = DataLoader(db_test, batch_size=1, shuffle=False, num_workers=1)
     logging.info("{} test iterations per epoch".format(len(testloader)))
@@ -53,7 +54,7 @@ def inference(args, model, test_save_path=None):
         h, w = sampled_batch["image"].size()[2:]
         image, label, case_name = sampled_batch["image"], sampled_batch["label"], sampled_batch['case_name'][0]
         metric_i = test_single_volume(image, label, model, classes=args.num_classes, patch_size=[args.img_size, args.img_size],
-                                      test_save_path=test_save_path, case=case_name, z_spacing=args.z_spacing)
+                                      test_save_path=test_save_path, case=case_name, z_spacing=args.z_spacing,Flag=Flag32)
         metric_list += np.array(metric_i)
         logging.info('idx %d case %s mean_dice %f mean_hd95 %f' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1]))
         DinaryLoss_path='/content/gdrive/MyDrive/TransUnet_Chy/DinaryLoss/{}.txt'.format(args.vit_name)
@@ -109,6 +110,7 @@ if __name__ == "__main__":
       elif IntMT==2:
         args.vit_name='ViT-B_32'
         args.vit_patches_size=32
+        args.Flag32=True
       elif IntMT==3:
         args.vit_name='ViT-L_16'
         args.vit_patches_size=16
@@ -176,6 +178,6 @@ if __name__ == "__main__":
         os.makedirs(test_save_path, exist_ok=True)
     else:
         test_save_path = None
-    inference(args, net, test_save_path)
+    inference(args, net, test_save_path,args.Flag32)
 
 
