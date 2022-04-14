@@ -133,7 +133,7 @@ if __name__ == "__main__":
     
     if args.GoogleUse==False:
     # name the same snapshot defined in train script!
-       snapshot_path = "/content/TransUNet/model/{}/{}".format(args.exp, 'TU')
+       snapshot_path = "/content/gdrive/MyDrive/TransUnet_Chy/model/{}/{}".format(args.exp, 'TU')
        snapshot_path = snapshot_path + '_pretrain' if args.is_pretrain else snapshot_path
        snapshot_path += '_' + args.vit_name
        snapshot_path = snapshot_path + '_skip' + str(args.n_skip)
