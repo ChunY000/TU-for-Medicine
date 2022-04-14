@@ -57,23 +57,35 @@ def inference(args, model, test_save_path=None,Flag32=False):
                                       test_save_path=test_save_path, case=case_name, z_spacing=args.z_spacing,Flag=Flag32)
         metric_list += np.array(metric_i)
         logging.info('idx %d case %s mean_dice %f mean_hd95 %f' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1]))
-        DinaryLoss_path='/content/gdrive/MyDrive/TransUnet_Chy/DinaryLoss/{}.txt'.format(args.vit_name)
+        if args.GoogleUse==False:
+          vit_name='OwnTraining_R50-Vit-B_16'
+        else:
+          vit_name=args.vit_name
+        DinaryLoss_path='/content/gdrive/MyDrive/TransUnet_Chy/DinaryLoss/{}.txt'.format(vit_name)
         F=open(DinaryLoss_path,'a')
         if i_batch==0:
          F.write('误差数据如下(左边Dice，右边hd95):\n')
-        F.write(str('idx %d case %s mean_dice %f mean_hd95 %f\n' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1])))
-        
+        F.write(str('图%d的误差： %s mean_dice %f mean_hd95 %f\n' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1])))
+    idxDice_Sum = 0
+    idxHd95_Sum = 0
+    lenidx=len(metric_list)
+    for ii in range(0,lenidx):
+      idxDice_Sum += metric_list[ii][0]
+      idxHd95_Sum += metric_list[ii][1]
+    idxDice_Mean=float(idxDice_Sum/lenidx)
+    idxHd95_Mean=float(idxHd95_Sum/lenidx)
+    F.write(str('所有图的均误差：%s mean_dice %f mean_hd95 %f\n' % (idxDice_Mean, idxHd95_Mean)))    
         
     metric_list = metric_list / len(db_test)
     for i in range(1, args.num_classes):
         logging.info('Mean class %d mean_dice %f mean_hd95 %f' % (i, metric_list[i-1][0], metric_list[i-1][1]))
-        F.write(str('Mean class %d mean_dice %f mean_hd95 %f\n' % (i, metric_list[i-1][0], metric_list[i-1][1])))
+        F.write(str('第%d类均误差：mean_dice %f mean_hd95 %f\n' % (i, metric_list[i-1][0], metric_list[i-1][1])))
     performance = np.mean(metric_list, axis=0)[0]
     mean_hd95 = np.mean(metric_list, axis=0)[1]
     logging.info('Testing performance in best val model: mean_dice : %f mean_hd95 : %f' % (performance, mean_hd95))
-    F.write(str('Testing performance in best val model: mean_dice : %f mean_hd95 : %f\n' % (performance, mean_hd95)))
+    F.write(str('总类均误差: mean_dice : %f mean_hd95 : %f\n' % (performance, mean_hd95)))
     F.close()
-    return "Testing Finished!"
+    return "测试完成!"
 
 
 if __name__ == "__main__":
