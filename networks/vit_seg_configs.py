@@ -19,6 +19,7 @@ def get_b16_config():
     config.patch_size = 16
 
     config.decoder_channels = (256, 128, 64, 16)
+    config.skip_channels=[0,0,0,0]
     config.n_classes = 2
     config.n_skip = 0
     config.activation = 'softmax'
@@ -64,6 +65,7 @@ def get_b32_config():
     """Returns the ViT-B/32 configuration."""
     config = get_b16_config()
     config.patches.size = (32, 32)
+    config.skip_channels=[0,0,0,0]
     config.pretrained_path = '/content/gdrive/MyDrive/TransUnet_Chy/model/GoogleModel/ViT-B_32.npz'
     return config
 
@@ -87,6 +89,7 @@ def get_l16_config():
     config.pretrained_path = '/content/gdrive/MyDrive/TransUnet_Chy/model/GoogleModel/ViT-L_16.npz'
     config.decoder_channels = (256, 128, 64, 16)
     config.n_classes = 2
+    config.skip_channels=[0,0,0,0]
     config.n_skip = 0
     config.activation = 'softmax'
     return config
