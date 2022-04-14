@@ -74,7 +74,7 @@ def inference(args, model, test_save_path=None,Flag32=False):
       idxHd95_Sum += metric_list[ii][1]
     idxDice_Mean=float(idxDice_Sum/lenidx)
     idxHd95_Mean=float(idxHd95_Sum/lenidx)
-    F.write(str('所有图的均误差：%s mean_dice %f mean_hd95 %f\n' % (idxDice_Mean, idxHd95_Mean)))    
+    F.write(str('所有图的均误差： mean_dice %f mean_hd95 %f\n' % (idxDice_Mean, idxHd95_Mean)))    
         
     metric_list = metric_list / len(db_test)
     for i in range(1, args.num_classes):
