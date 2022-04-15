@@ -74,7 +74,9 @@ def inference(args, model, test_save_path=None,Flag32=False):
       idxHd95_Sum += metric_list[ii][1]
     idxDice_Mean=float(idxDice_Sum/lenidx)
     idxHd95_Mean=float(idxHd95_Sum/lenidx)
-    F.write(str('所有图的均误差： mean_dice %f mean_hd95 %f\n' % (idxDice_Mean, idxHd95_Mean)))    
+    idxDice_Sum=0
+    idxHd95_Sum=0
+    F.write(str('所有图的均误差： mean_dice %f mean_hd95 %f\n' % (idxDice_Mean, idxHd95_Mean)))       
         
     metric_list = metric_list / len(db_test)
     for i in range(1, args.num_classes):
@@ -167,13 +169,13 @@ if __name__ == "__main__":
     if args.GoogleUse==False:
        if args.vit_name.find('R50') !=-1:
         config_vit.patches.grid = (int(args.img_size/args.vit_patches_size), int(args.img_size/args.vit_patches_size))
-       net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
+       net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes, argsV=args).cuda()
        snapshot = os.path.join(snapshot_path, 'best_model.pth')
        if not os.path.exists(snapshot): snapshot = snapshot.replace('best_model', 'epoch_'+str(args.max_epochs-1))
        snapshot_name = snapshot_path.split('/')[-1]
        net.load_state_dict(torch.load(snapshot))
     else:
-       net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
+       net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes, argsV=args).cuda()
        net.load_from(weights=np.load(config_vit.pretrained_path))
        snapshot_name = args.vit_name
 
