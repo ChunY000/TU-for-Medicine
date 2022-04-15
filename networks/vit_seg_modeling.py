@@ -122,16 +122,30 @@ class Mlp(nn.Module):
 class Embeddings(nn.Module):
     """Construct the embeddings from patch, position embeddings.
     """
-    def __init__(self, config, img_size, in_channels=3):
+    def __init__(self, config, img_size, in_channels=3, argsEm=None):
         super(Embeddings, self).__init__()
         self.hybrid = None
         self.config = config
         img_size = _pair(img_size)
 
         if config.patches.get("grid") is not None:   # ResNet
-            grid_size = config.patches["grid"]
-            patch_size = 1
-            n_patches = (img_size[0] // grid_size[0]) * (img_size[1] // grid_size[1])  
+            grid_size = config.patches["grid"] #R50-vit-b-16为（14,14）
+            # print('img_size的大小为{}'.format(img_size))
+            # print('config为{}'.format(config))
+            if argsEm.GoogleUse:
+            ###谷歌模型用如下代码
+             patch_size = (1,1)
+             #vitB16:196
+             n_patches = (img_size[0] // grid_size[0]) * (img_size[1] // grid_size[1]) 
+            ###
+            else:
+            ###自建模型用如下代码 
+             patch_size = (img_size[0] // 16 // grid_size[0], img_size[1] // 16 // grid_size[1])
+             patch_size_real = (patch_size[0] * 16, patch_size[1] * 16)
+             n_patches = (img_size[0] // patch_size_real[0]) * (img_size[1] // patch_size_real[1])
+            # print('patch:{}\npatch_real:{}\n n_patch:{}'.format(patch_size,patch_size_real,n_patches))
+            ###
+
             self.hybrid = True
         else:
             patch_size = _pair(config.patches["size"])
@@ -244,9 +258,9 @@ class Encoder(nn.Module):
 
 
 class Transformer(nn.Module):
-    def __init__(self, config, img_size, vis):
+    def __init__(self, config, img_size, vis, argsT=None):
         super(Transformer, self).__init__()
-        self.embeddings = Embeddings(config, img_size=img_size)
+        self.embeddings = Embeddings(config, img_size=img_size, argsEm=argsT)
         self.encoder = Encoder(config, vis)
 
     def forward(self, input_ids):
@@ -367,12 +381,12 @@ class DecoderCup(nn.Module):
 
 
 class VisionTransformer(nn.Module):
-    def __init__(self, config, img_size=224, num_classes=21843, zero_head=False, vis=False):
+    def __init__(self, config, img_size=224, num_classes=21843, zero_head=False, vis=False, argsV=None):
         super(VisionTransformer, self).__init__()
         self.num_classes = num_classes
         self.zero_head = zero_head
         self.classifier = config.classifier
-        self.transformer = Transformer(config, img_size, vis)
+        self.transformer = Transformer(config, img_size, vis, argsT=argsV)
         self.decoder = DecoderCup(config)
         self.segmentation_head = SegmentationHead(
             in_channels=config['decoder_channels'][-1],
