@@ -69,13 +69,14 @@ def inference(args, model, test_save_path=None,Flag32=False):
     idxDice_Sum = 0
     idxHd95_Sum = 0
     lenidx=len(metric_list)
+
+    #metric_list里记录的是8个类别的dice和hd95，最后/8得到的是所有图的总DICE和总HD95，还要/4
     for ii in range(0,lenidx):
       idxDice_Sum += metric_list[ii][0]
       idxHd95_Sum += metric_list[ii][1]
-    idxDice_Mean=float(idxDice_Sum/lenidx)
-    idxHd95_Mean=float(idxHd95_Sum/lenidx)
-    idxDice_Sum=0
-    idxHd95_Sum=0
+    idxDice_Mean=float(idxDice_Sum/(lenidx*len(testloader)))
+    idxHd95_Mean=float(idxHd95_Sum/(lenidx*len(testloader)))
+    print('lenidx={},idxDice_Sum={},idxDice_Mean={}'.format(lenidx,idxDice_Sum,idxDice_Mean))
     F.write(str('所有图的均误差： mean_dice %f mean_hd95 %f\n' % (idxDice_Mean, idxHd95_Mean)))       
         
     metric_list = metric_list / len(db_test)
