@@ -34,11 +34,13 @@ parser.add_argument('--img_size', type=int,
 parser.add_argument('--seed', type=int,
                     default=1234, help='random seed')
 parser.add_argument('--n_skip', type=int,
-                    default=3, help='using number of skip-connect, default is num')
+                    default=0, help='using number of skip-connect, default is num')
 parser.add_argument('--vit_name', type=str,
                     default='R50-ViT-B_16', help='select one vit model')
 parser.add_argument('--vit_patches_size', type=int,
                     default=16, help='vit_patches_size, default is 16')
+# parser.add_argument('--vit_choose', type=int,
+#                     default=1, help='choose the type you want to train')
 args = parser.parse_args()
 
 
@@ -49,7 +51,19 @@ if __name__ == "__main__":
     else:
         cudnn.benchmark = False
         cudnn.deterministic = True
-
+        
+    vit_choose=int(input('请选择你想要训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16: '))
+    if vit_choose == 2:
+      args.vit_name='ViT-B_16'
+    elif vit_choose == 3:
+      args.vit_name='ViT-B_32'
+      args.vit_patches_size=32
+    elif vit_choose == 4:
+      args.vit_name='ViT-L_16'
+    else:
+      args.n_skip=3
+        
+        
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
