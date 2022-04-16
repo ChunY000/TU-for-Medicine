@@ -132,6 +132,18 @@ if __name__ == "__main__":
       elif IntMT==4:
         args.vit_name='R50-ViT-B_16'
         args.vit_patches_size=16
+    else:
+      UseOwn=int(input('想用哪个自己训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16: '))
+      if UseOwn == 2:
+        args.vit_name='ViT-B_16'
+      elif UseOwn == 3:
+        args.vit_name='ViT-B_32'
+        args.vit_patches_size=32
+      elif UseOwn == 4:
+        args.vit_name='ViT-L_16'
+      else :
+        args.vit_name='R50-ViT-B_16'
+      
     Saveimg=input('要保存图片吗？ 1.保存 2.不保存') 
     SaveImg=int(Saveimg)
     if SaveImg==1:
