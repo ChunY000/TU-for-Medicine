@@ -60,7 +60,7 @@ if __name__ == "__main__":
       args.vit_patches_size=32
     elif vit_choose == 4:
       args.vit_name='ViT-L_16'
-    else:
+    elif:
       args.n_skip=3
         
         
