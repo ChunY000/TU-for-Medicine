@@ -14,11 +14,13 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from utils import DiceLoss
 from torchvision import transforms
+from scipy.ndimage.interpolation import zoom
+from torch.autograd import Variable
 
 def worker_init_fn(worker_id):
     random.seed(1234 + worker_id)
 
-def trainer_synapse(args, model, snapshot_path):
+def trainer_synapse(args, model, snapshot_path,Flag32=False):
     from datasets.dataset_synapse import Synapse_dataset, RandomGenerator
     logging.basicConfig(filename=snapshot_path + "/log.txt", level=logging.INFO,
                         format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
@@ -54,9 +56,36 @@ def trainer_synapse(args, model, snapshot_path):
             image_batch, label_batch = sampled_batch['image'], sampled_batch['label']
             image_batch, label_batch = image_batch.cuda(), label_batch.cuda()
             outputs = model(image_batch)
+            if Flag32:           
+              outputs=nn.functional.interpolate(outputs,224)  
+            ''''''
+            # print('\noutputs:{}\nlabel_batch:{}'.format(outputs.shape,label_batch.shape))
+            # if Flag32:
+            #   outputs_m=outputs.cpu().detach().numpy()
+            #   outputs=outputs.cpu().detach().numpy()
+
+            #   outputs_m=outputs_m.reshape(24,1,224,504)
+            #   outputs_m=outputs_m.squeeze()
+
+            #   outputs_m=zoom(outputs_m,(1,1,224/504))
+            #   outputs=zoom(outputs,(1,1,2,2))
+
+            #   outputs_m=torch.tensor(outputs_m)
+            #   outputs=torch.tensor(outputs)
+
+            #   outputs_m=outputs_m.cuda()
+            #   outputs=outputs.cuda()
+            #outputs_m(24,224,224),outputs(24,9,224,224),label(24,224,224)
+            # print('\noutputs:{}\nlabel_batch:{}'.format(outputs.shape,label_batch[:].long().shape))
+            # if Flag32:
+            #  loss_ce = ce_loss(outputs, label_batch.long())
+            #  #原来是loss_ce = ce_loss(outputs_m, label_batch[:].long())
+            # else:
             loss_ce = ce_loss(outputs, label_batch[:].long())
             loss_dice = dice_loss(outputs, label_batch, softmax=True)
             loss = 0.5 * loss_ce + 0.5 * loss_dice
+            # if Flag32:
+            #  loss=Variable(loss,requires_grad=True)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -69,7 +98,7 @@ def trainer_synapse(args, model, snapshot_path):
             writer.add_scalar('info/total_loss', loss, iter_num)
             writer.add_scalar('info/loss_ce', loss_ce, iter_num)
 
-            logging.info('iteration %d : loss : %f, loss_ce: %f' % (iter_num, loss.item(), loss_ce.item()))
+            logging.info('循环第 %d 次 : loss : %f, loss_ce: %f' % (iter_num, loss.item(), loss_ce.item()))
 
             if iter_num % 20 == 0:
                 image = image_batch[1, 0:1, :, :]
@@ -94,4 +123,4 @@ def trainer_synapse(args, model, snapshot_path):
 #             break
 
     writer.close()
-    return "Training Finished!"
+    return "训练完毕!"
