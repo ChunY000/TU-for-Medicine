@@ -50,14 +50,15 @@ if __name__ == "__main__":
         cudnn.deterministic = False
     else:
         cudnn.benchmark = False
-        cudnn.deterministic = True
-        
+        cudnn.deterministic = True    
     vit_choose=int(input('请选择你想要训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16: '))
+    flag32=False
     if vit_choose == 2:
       args.vit_name='ViT-B_16'
     elif vit_choose == 3:
       args.vit_name='ViT-B_32'
       args.vit_patches_size=32
+      flag32=True
     elif vit_choose == 4:
       args.vit_name='ViT-L_16'
     else:
@@ -104,4 +105,4 @@ if __name__ == "__main__":
     #net.load_from(weights=np.load(config_vit.pretrained_path))
 
     trainer = {'Synapse': trainer_synapse,}
-    trainer[dataset_name](args, net, snapshot_path)
+    trainer[dataset_name](args, net, snapshot_path,Flag32=flag32)
