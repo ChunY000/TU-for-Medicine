@@ -61,6 +61,7 @@ if __name__ == "__main__":
       flag32=True
     elif vit_choose == 4:
       args.vit_name='ViT-L_16'
+      args.batch_size=20
     else:
       args.n_skip=3
         
