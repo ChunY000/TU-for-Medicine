@@ -142,6 +142,7 @@ if __name__ == "__main__":
         args.Flag32=True
       elif UseOwn == 4:
         args.vit_name='ViT-L_16'
+        args.batch_size=20
       else :
         args.vit_name='R50-ViT-B_16'
         args.n_skip=3
