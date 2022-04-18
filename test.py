@@ -31,7 +31,7 @@ parser.add_argument('--batch_size', type=int, default=24,
 parser.add_argument('--img_size', type=int, default=224, help='input patch size of network input')
 parser.add_argument('--is_savenii', default=False, help='whether to save results during inference')
 
-parser.add_argument('--n_skip', type=int, default=3, help='using number of skip-connect, default is num')
+parser.add_argument('--n_skip', type=int, default=0, help='using number of skip-connect, default is num')
 parser.add_argument('--vit_name', type=str, default='R50-ViT-B_16', help='select one vit model')
 
 parser.add_argument('--test_save_dir', type=str, default='../predictions', help='saving prediction as nii!')
@@ -58,7 +58,7 @@ def inference(args, model, test_save_path=None,Flag32=False):
         metric_list += np.array(metric_i)
         logging.info('idx %d case %s mean_dice %f mean_hd95 %f' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1]))
         if args.GoogleUse==False:
-          vit_name='OwnTraining_R50-Vit-B_16'
+          vit_name='OwnTraining_{}'.format(args.vit_name)
         else:
           vit_name=args.vit_name
         DinaryLoss_path='/content/gdrive/MyDrive/TransUnet_Chy/DinaryLoss/{}.txt'.format(vit_name)
@@ -139,10 +139,12 @@ if __name__ == "__main__":
       elif UseOwn == 3:
         args.vit_name='ViT-B_32'
         args.vit_patches_size=32
+        args.Flag32=True
       elif UseOwn == 4:
         args.vit_name='ViT-L_16'
       else :
         args.vit_name='R50-ViT-B_16'
+        args.n_skip=3
       
     Saveimg=input('要保存图片吗？ 1.保存 2.不保存') 
     SaveImg=int(Saveimg)
