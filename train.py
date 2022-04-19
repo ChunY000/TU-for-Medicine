@@ -51,7 +51,7 @@ if __name__ == "__main__":
     else:
         cudnn.benchmark = False
         cudnn.deterministic = True    
-    vit_choose=int(input('请选择你想要训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16: '))
+    vit_choose=int(input('请选择你想要训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16 5.R152-vit-b-16: '))
     flag32=False
     if vit_choose == 2:
       args.vit_name='ViT-B_16'
@@ -62,6 +62,8 @@ if __name__ == "__main__":
     elif vit_choose == 4:
       args.vit_name='ViT-L_16'
       args.batch_size=20
+    elif vit_choose == 5:
+      args.vit_name=='R152-ViT-B_16'
     else:
       args.n_skip=3
         
