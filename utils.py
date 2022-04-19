@@ -58,8 +58,7 @@ def calculate_metric_percase(pred, gt):
         return 0, 0
 #计算准确率，预测结果中占label的面积
 def Right(output, target):
-    smooth = 1e-5
- 
+
     if torch.is_tensor(output):
         # output = torch.sigmoid(output).data.cpu().numpy()
         output = torch.cpu().detach().numpy()
@@ -67,15 +66,23 @@ def Right(output, target):
         target = target.cpu().detach().numpy()
     H,W,C=output.shape[1],output.shape[2],output.shape[0]
     print('output:{}\ntarget:{}'.format(output.shape,target.shape))
-    r=0
+    r1=0
+    r2=0
+    s=0
     for c in range(C):
       for h in range(H):
         for w in range(W):
+          if output[c,h,w]==target[c,h,w]:
+            r1+=1
           if output[c,h,w]==target[c,h,w] and target[c,h,w]!=0:
-            r+=1
+            r2+=1
+          if target[c,h,w]!=0:
+            s+=1
     
- 
-    return r/(H*W*C)
+    #r1/(H*W*C)为全图准确率，比较全面地反应预测结果准确性，但可能受到多余黑色背景影响拉高准确率
+    #(r2/s)为label中灰白色区域准确率，可以较为准确得出预测的准确性，但可能
+    #受到预测结果溢出的影响
+    return (r1/(H*W*C)+(r2/s))/2
         
 
 
