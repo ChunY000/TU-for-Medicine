@@ -109,12 +109,12 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
     # f.write('prediction:{}\n维度是{}\n'.format(pred_states,str(pred.shape)))
     # f.close()
     metric_list = []
-    metric_right=[]
+    right=0.0
     #计算每张图8个类的Dice和HD95性能指标
     for i in range(1, classes):
         metric_list.append(calculate_metric_percase(prediction == i, label == i))
     #计算准确率
-    metric_right.append(Right(prediction, label))
+    right=Right(prediction, label)
    
      
     if test_save_path is not None:
@@ -127,4 +127,4 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
         sitk.WriteImage(prd_itk, test_save_path + '/'+case + "_pred.nii.gz")
         sitk.WriteImage(img_itk, test_save_path + '/'+ case + "_img.nii.gz")
         sitk.WriteImage(lab_itk, test_save_path + '/'+ case + "_gt.nii.gz")
-    return metric_list,metric_right
+    return metric_list,right
