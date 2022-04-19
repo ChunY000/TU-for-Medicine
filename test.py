@@ -50,14 +50,16 @@ def inference(args, model, test_save_path=None,Flag32=False):
     logging.info("{} test iterations per epoch".format(len(testloader)))
     model.eval()
     metric_list = 0.0
+    right_list=[]
     for i_batch, sampled_batch in tqdm(enumerate(testloader)):
         h, w = sampled_batch["image"].size()[2:]
         image, label, case_name = sampled_batch["image"], sampled_batch["label"], sampled_batch['case_name'][0]
         
-        metric_i,metric_r = test_single_volume(image, label, model, classes=args.num_classes, patch_size=[args.img_size, args.img_size],
+        metric_i,right = test_single_volume(image, label, model, classes=args.num_classes, patch_size=[args.img_size, args.img_size],
                                       test_save_path=test_save_path, case=case_name, z_spacing=args.z_spacing,Flag=Flag32)
         
         metric_list += np.array(metric_i)
+        right_list.append(right)
         #np.mean就是对这张图的8个类求均值，所以也是这张图的均值
         logging.info('idx %d case %s mean_dice %f mean_hd95 %f' % (i_batch+1, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1]))
         if args.GoogleUse==False:
@@ -67,10 +69,12 @@ def inference(args, model, test_save_path=None,Flag32=False):
         DinaryLoss_path='/content/gdrive/MyDrive/TransUnet_Chy/DinaryLoss/{}.txt'.format(vit_name)
         F=open(DinaryLoss_path,'a')
         if i_batch==0:
-         F.write('误差数据如下(左边Dice，右边hd95):\n')
+         F.write('误差数据如下(左边Dice，右边hd95,下面准确率):\n')
         F.write(str('图%d的误差： %s mean_dice %f mean_hd95 %f\n' % (i_batch+1, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1])))
+        F.write(str('图%d的准确率： %f \n' % (i_batch+1, metric_r)))
     idxDice_Sum = 0
     idxHd95_Sum = 0
+    right_Sum=0
     lenidx=len(metric_list)
 
     #metric_list里记录的是8个类别的dice和hd95，最后/8得到的是所有图的总DICE和总HD95，还要/4
@@ -79,8 +83,14 @@ def inference(args, model, test_save_path=None,Flag32=False):
       idxHd95_Sum += metric_list[ii][1]
     idxDice_Mean=float(idxDice_Sum/(lenidx*len(testloader)))
     idxHd95_Mean=float(idxHd95_Sum/(lenidx*len(testloader)))
+    
+    for n in range(len(testloader)):
+      right_Sum+=right_list[n]
+    right_Mean=np.array(right_Sum).mean()
+    
     print('lenidx={},idxDice_Sum={},idxDice_Mean={}'.format(lenidx,idxDice_Sum,idxDice_Mean))
-    F.write(str('所有图的均误差： mean_dice %f mean_hd95 %f\n' % (idxDice_Mean, idxHd95_Mean)))       
+    F.write(str('所有图的均误差： mean_dice %f mean_hd95 %f\n' % (idxDice_Mean, idxHd95_Mean)))
+    F.write(str('所有图的均准确度： %f \n' % (right_Mean)))
         
     metric_list = metric_list / len(db_test)
     for i in range(1, args.num_classes):
