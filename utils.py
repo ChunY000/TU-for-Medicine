@@ -61,14 +61,22 @@ def Right(output, target):
     smooth = 1e-5
  
     if torch.is_tensor(output):
-        output = torch.sigmoid(output).data.cpu().numpy()
+        # output = torch.sigmoid(output).data.cpu().numpy()
+        output = torch.cpu().detach().numpy()
     if torch.is_tensor(target):
-        target = target.data.cpu().numpy()
+        target = target.cpu().detach().numpy()
+    H,W,C=output.shape[1],output.shape[2],output.shape[0]
+    print('output:{}\ntarget:{}'.format(output.shape,target.shape))
+    r=0
+    for c in range(C):
+      for h in range(H):
+        for w in range(W):
+          if output[c,h,w]==target[c,h,w] and target[c,h,w]!=0:
+            r+=1
+    
  
-    intersection = (output * target).sum()
- 
-    return (intersection + smooth) / \
-        (target.sum() + smooth)
+    return r/(H*W*C)
+        
 
 
 def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_save_path=None, case=None, z_spacing=1,Flag=False):
