@@ -60,6 +60,11 @@ def get_r50_b16_config():
 
     return config
 
+def get_r152_b16_config():
+    config=get_r50_b16_config()
+    config.resnet.num_layers = (3, 8, 39)
+    return config
+
 
 def get_b32_config():
     """Returns the ViT-B/32 configuration."""
