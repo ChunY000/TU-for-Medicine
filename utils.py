@@ -56,6 +56,19 @@ def calculate_metric_percase(pred, gt):
         return 1, 0
     else:
         return 0, 0
+#计算准确率，预测结果中占label的面积
+def Right(output, target):
+    smooth = 1e-5
+ 
+    if torch.is_tensor(output):
+        output = torch.sigmoid(output).data.cpu().numpy()
+    if torch.is_tensor(target):
+        target = target.data.cpu().numpy()
+ 
+    intersection = (output * target).sum()
+ 
+    return (intersection + smooth) / \
+        (target.sum() + smooth)
 
 
 def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_save_path=None, case=None, z_spacing=1,Flag=False):
@@ -96,9 +109,14 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
     # f.write('prediction:{}\n维度是{}\n'.format(pred_states,str(pred.shape)))
     # f.close()
     metric_list = []
+    metric_right=[]
+    #计算每张图8个类的Dice和HD95性能指标
     for i in range(1, classes):
         metric_list.append(calculate_metric_percase(prediction == i, label == i))
-
+    #计算准确率
+    metric_right.append(Right(prediction, label))
+   
+     
     if test_save_path is not None:
         img_itk = sitk.GetImageFromArray(image.astype(np.float32))
         prd_itk = sitk.GetImageFromArray(prediction.astype(np.float32))
@@ -109,4 +127,4 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
         sitk.WriteImage(prd_itk, test_save_path + '/'+case + "_pred.nii.gz")
         sitk.WriteImage(img_itk, test_save_path + '/'+ case + "_img.nii.gz")
         sitk.WriteImage(lab_itk, test_save_path + '/'+ case + "_gt.nii.gz")
-    return metric_list
+    return metric_list,metric_right
