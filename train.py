@@ -64,6 +64,7 @@ if __name__ == "__main__":
       args.batch_size=20
     elif vit_choose == 5:
       args.vit_name=='R152-ViT-B_16'
+      args.n_skip=3
     else:
       args.n_skip=3
         
