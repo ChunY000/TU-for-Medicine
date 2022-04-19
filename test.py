@@ -71,7 +71,8 @@ def inference(args, model, test_save_path=None,Flag32=False):
         if i_batch==0:
          F.write('误差数据如下(左边Dice，右边hd95,下面准确率):\n')
         F.write(str('图%d的误差： %s mean_dice %f mean_hd95 %f\n' % (i_batch+1, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1])))
-        F.write(str('图%d的准确率： %f \n' % (i_batch+1, metric_r)))
+        F.write(str('图%d的准确率： %f \n' % (i_batch+1, right*100)))
+        logging.info(str('图%d的准确率： %.2f \n' % (i_batch+1, right*100)))
     idxDice_Sum = 0
     idxHd95_Sum = 0
     right_Sum=0
