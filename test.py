@@ -53,10 +53,13 @@ def inference(args, model, test_save_path=None,Flag32=False):
     for i_batch, sampled_batch in tqdm(enumerate(testloader)):
         h, w = sampled_batch["image"].size()[2:]
         image, label, case_name = sampled_batch["image"], sampled_batch["label"], sampled_batch['case_name'][0]
-        metric_i = test_single_volume(image, label, model, classes=args.num_classes, patch_size=[args.img_size, args.img_size],
+        
+        metric_i,metric_r = test_single_volume(image, label, model, classes=args.num_classes, patch_size=[args.img_size, args.img_size],
                                       test_save_path=test_save_path, case=case_name, z_spacing=args.z_spacing,Flag=Flag32)
+        
         metric_list += np.array(metric_i)
-        logging.info('idx %d case %s mean_dice %f mean_hd95 %f' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1]))
+        #np.mean就是对这张图的8个类求均值，所以也是这张图的均值
+        logging.info('idx %d case %s mean_dice %f mean_hd95 %f' % (i_batch+1, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1]))
         if args.GoogleUse==False:
           vit_name='OwnTraining_{}'.format(args.vit_name)
         else:
@@ -65,7 +68,7 @@ def inference(args, model, test_save_path=None,Flag32=False):
         F=open(DinaryLoss_path,'a')
         if i_batch==0:
          F.write('误差数据如下(左边Dice，右边hd95):\n')
-        F.write(str('图%d的误差： %s mean_dice %f mean_hd95 %f\n' % (i_batch, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1])))
+        F.write(str('图%d的误差： %s mean_dice %f mean_hd95 %f\n' % (i_batch+1, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1])))
     idxDice_Sum = 0
     idxHd95_Sum = 0
     lenidx=len(metric_list)
