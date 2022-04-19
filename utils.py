@@ -84,8 +84,10 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
             net.eval()
             with torch.no_grad():
                 outputs = net(input)
+                #pred中得出的贡献最大的类，之后会和label中贡献最大的类作比较，看是不是判断对了，计算dice和hd95
                 out = torch.argmax(torch.softmax(outputs, dim=1), dim=1).squeeze(0)
                 out = out.cpu().detach().numpy()
+                #out改下大小就是prediction
                 if x != patch_size[0] or y != patch_size[1]:
                     if Flag==True:
                         pred = zoom(out, (x / 112, y / 112), order=0)
@@ -108,6 +110,7 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
     # pred_states=str(prediction)
     # f.write('prediction:{}\n维度是{}\n'.format(pred_states,str(pred.shape)))
     # f.close()
+    print('\nprediction的最大值是{}，最小值是{}'.format(prediction.max(),prediction.min()))
     metric_list = []
     right=0.0
     #计算每张图8个类的Dice和HD95性能指标
