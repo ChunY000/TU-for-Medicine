@@ -71,7 +71,7 @@ def inference(args, model, test_save_path=None,Flag32=False):
         if i_batch==0:
          F.write('误差数据如下(左边Dice，右边hd95,下面准确率):\n')
         F.write(str('图%d的误差： %s mean_dice %f mean_hd95 %f\n' % (i_batch+1, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1])))
-        F.write(str('图%d的准确率： %f \n' % (i_batch+1, right*100)))
+        F.write(str('图%d的准确率： %.2f' % (i_batch+1, right*100)+'%\n'))
         logging.info(str('图%d的准确率： %.2f' % (i_batch+1, right*100))+'%\n')
     idxDice_Sum = 0
     idxHd95_Sum = 0
@@ -87,7 +87,7 @@ def inference(args, model, test_save_path=None,Flag32=False):
     
     for n in range(len(testloader)):
       right_Sum+=right_list[n]
-    right_Mean=np.array(right_Sum).mean()
+    right_Mean=right_Sum/len(testloader)
     
     print('lenidx={},idxDice_Sum={},idxDice_Mean={}'.format(lenidx,idxDice_Sum,idxDice_Mean))
     F.write(str('所有图的均误差： mean_dice %f mean_hd95 %f\n' % (idxDice_Mean, idxHd95_Mean)))
