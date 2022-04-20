@@ -200,7 +200,7 @@ if __name__ == "__main__":
    
 
     if args.GoogleUse==False:
-       if args.vit_name.find('R50') !=-1:
+       if args.vit_name.find('R50') !=-1 or args.vit_name.find('R152') !=-1:
         config_vit.patches.grid = (int(args.img_size/args.vit_patches_size), int(args.img_size/args.vit_patches_size))
        net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes, argsV=args).cuda()
        snapshot = os.path.join(snapshot_path, 'best_model.pth')
