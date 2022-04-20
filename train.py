@@ -39,8 +39,8 @@ parser.add_argument('--vit_name', type=str,
                     default='R50-ViT-B_16', help='select one vit model')
 parser.add_argument('--vit_patches_size', type=int,
                     default=16, help='vit_patches_size, default is 16')
-# parser.add_argument('--vit_choose', type=int,
-#                     default=1, help='choose the type you want to train')
+parser.add_argument('--GoogleUse', type=bool,
+                     default=False, help='choose the type you want to train')
 args = parser.parse_args()
 
 
@@ -101,11 +101,14 @@ if __name__ == "__main__":
     if not os.path.exists(snapshot_path):
         os.makedirs(snapshot_path)
     config_vit = CONFIGS_ViT_seg[args.vit_name]
+    print(config_vit.resnet.num_layers)
     config_vit.n_classes = args.num_classes
     config_vit.n_skip = args.n_skip
-    if args.vit_name.find('R50') != -1:
+    #ResNet网络调整grid为14×14(patch_size=16)
+    #‘=-1’就是指name里没有R50/R152
+    if args.vit_name.find('R50') != -1 or args.vit_name.find('R152') != -1:
         config_vit.patches.grid = (int(args.img_size / args.vit_patches_size), int(args.img_size / args.vit_patches_size))
-    net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
+    net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes,argsV=args).cuda()
     #net.load_from(weights=np.load(config_vit.pretrained_path))
 
     trainer = {'Synapse': trainer_synapse,}
