@@ -160,6 +160,10 @@ if __name__ == "__main__":
       elif UseOwn == 5:
         args.vit_name='R152-ViT-B_16'
         args.n_skip=3
+      elif UseOwn == 6:
+        args.vit_name='R50-ViT-L_16'
+        args.n_skip=3
+        args.batch_size=18
       else :
         args.vit_name='R50-ViT-B_16'
         args.n_skip=3
