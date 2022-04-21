@@ -131,7 +131,7 @@ if __name__ == "__main__":
     UseG=int(UseGoogle)
     if UseG==1:
       args.GoogleUse=True 
-      ModelType=input('1.VIT-B-16  2.VIT-B-32  3.VIT-L-16  4.R50-VIT-B-16:')
+      ModelType=input('1.VIT-B-16  2.VIT-B-32  3.VIT-L-16  4.R50-VIT-B-16  5.R152-VIT-B-16  6.:')
       IntMT=int(ModelType)
       if IntMT == 1:
         args.vit_name='ViT-B_16'
