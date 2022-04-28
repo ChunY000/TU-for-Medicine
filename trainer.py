@@ -56,8 +56,8 @@ def trainer_synapse(args, model, snapshot_path,Flag32=False):
             image_batch, label_batch = sampled_batch['image'], sampled_batch['label']
             image_batch, label_batch = image_batch.cuda(), label_batch.cuda()
             outputs = model(image_batch)
-            if Flag32:           
-              outputs=nn.functional.interpolate(outputs,224)  
+#             if Flag32:           
+#               outputs=nn.functional.interpolate(outputs,224)  
             ''''''
             # print('\noutputs:{}\nlabel_batch:{}'.format(outputs.shape,label_batch.shape))
             # if Flag32:
