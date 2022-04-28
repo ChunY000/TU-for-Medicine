@@ -105,9 +105,9 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
                 out = out.cpu().detach().numpy()
                 #out改下大小就是prediction
                 if x != patch_size[0] or y != patch_size[1]:
-                    if Flag==True:
-                        pred = zoom(out, (x / 112, y / 112), order=0)
-                    else:
+#                     if Flag==True:
+#                         pred = zoom(out, (x / 112, y / 112), order=0)
+#                     else:
                         pred = zoom(out, (x / patch_size[0], y / patch_size[1]), order=0)
                 else:
                     pred = out
