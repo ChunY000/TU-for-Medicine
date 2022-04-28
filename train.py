@@ -105,7 +105,8 @@ if __name__ == "__main__":
     if not os.path.exists(snapshot_path):
         os.makedirs(snapshot_path)
     config_vit = CONFIGS_ViT_seg[args.vit_name]
-    print(config_vit.resnet.num_layers)
+    if args.vit_name.find('R50') != -1 or args.vit_name.find('R152') != -1:
+     print(config_vit.resnet.num_layers)
     config_vit.n_classes = args.num_classes
     config_vit.n_skip = args.n_skip
     #ResNet网络调整grid为14×14(patch_size=16)
