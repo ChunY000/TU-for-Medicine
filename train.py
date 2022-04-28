@@ -51,7 +51,7 @@ if __name__ == "__main__":
     else:
         cudnn.benchmark = False
         cudnn.deterministic = True    
-    vit_choose=int(input('请选择你想要训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16 5.R152-vit-b-16: '))
+    vit_choose=int(input('请选择你想要训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16 5.R152-vit-b-16  6.R50-vit-l-16:  '))
     flag32=False
     if vit_choose == 2:
       args.vit_name='ViT-B_16'
@@ -65,8 +65,12 @@ if __name__ == "__main__":
     elif vit_choose == 5:
       args.vit_name=='R152-ViT-B_16'
       args.n_skip=3
+    elif vit_choose == 6:
+      args.vit_name=='R50-ViT-L_16'
+      args.n_skip=3
     else:
       args.n_skip=3
+    print('您选择的是：',args.vit_name)
         
         
     random.seed(args.seed)
@@ -108,7 +112,7 @@ if __name__ == "__main__":
     #‘=-1’就是指name里没有R50/R152
     if args.vit_name.find('R50') != -1 or args.vit_name.find('R152') != -1:
         config_vit.patches.grid = (int(args.img_size / args.vit_patches_size), int(args.img_size / args.vit_patches_size))
-    net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes,argsV=args).cuda()
+    net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes,argsV=args,Flag32=flag32).cuda()
     #net.load_from(weights=np.load(config_vit.pretrained_path))
 
     trainer = {'Synapse': trainer_synapse,}
