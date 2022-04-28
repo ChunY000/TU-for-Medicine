@@ -127,6 +127,7 @@ if __name__ == "__main__":
             'z_spacing': 1,
         },
     }
+    flag32=False
     UseGoogle=input('要使用谷歌预训练模块吗？ 1.使用 2.不使用')
     UseG=int(UseGoogle)
     if UseG==1:
@@ -140,6 +141,7 @@ if __name__ == "__main__":
         args.vit_name='ViT-B_32'
         args.vit_patches_size=32
         args.Flag32=True
+        flag32=True
       elif IntMT==3:
         args.vit_name='ViT-L_16'
         args.vit_patches_size=16
@@ -206,7 +208,7 @@ if __name__ == "__main__":
     if args.GoogleUse==False:
        if args.vit_name.find('R50') !=-1 or args.vit_name.find('R152') !=-1:
         config_vit.patches.grid = (int(args.img_size/args.vit_patches_size), int(args.img_size/args.vit_patches_size))
-       net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes, argsV=args).cuda()
+       net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes, argsV=args,Flag32=flag32).cuda()
        snapshot = os.path.join(snapshot_path, 'best_model.pth')
        if not os.path.exists(snapshot): snapshot = snapshot.replace('best_model', 'epoch_'+str(args.max_epochs-1))
        snapshot_name = snapshot_path.split('/')[-1]
