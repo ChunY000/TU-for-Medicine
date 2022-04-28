@@ -318,9 +318,13 @@ class DecoderBlock(nn.Module):
             use_batchnorm=use_batchnorm,
         )
         self.up = nn.UpsamplingBilinear2d(scale_factor=2)
+        self.up32 = nn.UpsamplingBilinear2d(scale_factor=4)
 
-    def forward(self, x, skip=None):
-        x = self.up(x)
+    def forward(self, x, skip=None,Flag32=None):
+        if Flag32:
+            x = self.up32(x)
+        else:
+            x = self.up(x)
         if skip is not None:
             x = torch.cat([x, skip], dim=1)
         x = self.conv1(x)
@@ -365,18 +369,21 @@ class DecoderCup(nn.Module):
         ]
         self.blocks = nn.ModuleList(blocks)
 
-    def forward(self, hidden_states, features=None):
+    def forward(self, hidden_states, features=None,Flag32=None):
         B, n_patch, hidden = hidden_states.size()  # reshape from (B, n_patch, hidden) to (B, h, w, hidden)
+        flag=False
         h, w = int(np.sqrt(n_patch)), int(np.sqrt(n_patch))
         x = hidden_states.permute(0, 2, 1)
         x = x.contiguous().view(B, hidden, h, w)
         x = self.conv_more(x)
         for i, decoder_block in enumerate(self.blocks):
+            if i == 3:
+                flag=True
             if features is not None:
                 skip = features[i] if (i < self.config.n_skip) else None
             else:
                 skip = None
-            x = decoder_block(x, skip=skip)
+            x = decoder_block(x, skip=skip,Flag32=flag)
         return x
 
 
@@ -395,11 +402,11 @@ class VisionTransformer(nn.Module):
         )
         self.config = config
 
-    def forward(self, x):
+    def forward(self, x,Flag32):
         if x.size()[1] == 1:
             x = x.repeat(1,3,1,1)
         x, attn_weights, features = self.transformer(x)  # (B, n_patch, hidden)
-        x = self.decoder(x, features)
+        x = self.decoder(x, features,Flag32=Flag32)
         logits = self.segmentation_head(x)
         return logits
 
