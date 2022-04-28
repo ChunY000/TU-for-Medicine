@@ -63,10 +63,10 @@ if __name__ == "__main__":
       args.vit_name='ViT-L_16'
       args.batch_size=20
     elif vit_choose == 5:
-      args.vit_name=='R152-ViT-B_16'
+      args.vit_name='R152-ViT-B_16'
       args.n_skip=3
     elif vit_choose == 6:
-      args.vit_name=='R50-ViT-L_16'
+      args.vit_name='R50-ViT-L_16'
       args.n_skip=3
     else:
       args.n_skip=3
