@@ -51,6 +51,12 @@ if __name__ == "__main__":
     else:
         cudnn.benchmark = False
         cudnn.deterministic = True    
+    data_choose=int(input('选择要训练的数据集1.Synapse 2.Corona：'))
+    if data_choose ==1:
+      args.dataset='Synapse'
+    elif data_choose ==2:
+      args.dataset ='Corona'
+      
     vit_choose=int(input('请选择你想要训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16 5.R152-vit-b-16  6.R50-vit-l-16:  '))
     flag32=False
     if vit_choose == 2:
@@ -72,6 +78,7 @@ if __name__ == "__main__":
     else:
       args.n_skip=3
     print('您选择的是：',args.vit_name)
+    
         
         
     random.seed(args.seed)
@@ -84,6 +91,11 @@ if __name__ == "__main__":
             'root_path': '/content/TransUNet/Data/Synapse/train_npz',
             'list_dir': '/content/TransUNet/lists/lists_Synapse',
             'num_classes': 9,
+        },
+        'Corona': {
+            'root_path': '/content/TransUNet/Data/Corona19/train_npz',
+            'list_dir': '/content/TransUNet/lists/lists_Corona',
+            'num_classes': 2,
         },
     }
     args.num_classes = dataset_config[dataset_name]['num_classes']
