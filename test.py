@@ -132,7 +132,7 @@ if __name__ == "__main__":
     UseG=int(UseGoogle)
     if UseG==1:
       args.GoogleUse=True 
-      ModelType=input('1.VIT-B-16  2.VIT-B-32  3.VIT-L-16  4.R50-VIT-B-16  5.R152-VIT-B-16  6.:')
+      ModelType=input('1.VIT-B-16  2.VIT-B-32  3.VIT-L-16  4.R50-VIT-B-16  5.R152-VIT-B-16  6.R50-VIT-L-16:')
       IntMT=int(ModelType)
       if IntMT == 1:
         args.vit_name='ViT-B_16'
@@ -161,6 +161,7 @@ if __name__ == "__main__":
         args.batch_size=20
       elif UseOwn == 5:
         args.vit_name='R152-ViT-B_16'
+        args.max_epochs=80
         args.n_skip=3
       elif UseOwn == 6:
         args.vit_name='R50-ViT-L_16'
