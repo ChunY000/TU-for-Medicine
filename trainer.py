@@ -20,7 +20,7 @@ from torch.autograd import Variable
 def worker_init_fn(worker_id):
     random.seed(1234 + worker_id)
 
-def trainer_synapse(args, model, snapshot_path,Flag32=False):
+def trainer_Medicine(args, model, snapshot_path,Flag32=False):
     from datasets.dataset_Medicine import Medicine_dataset, RandomGenerator
     logging.basicConfig(filename=snapshot_path + "/log.txt", level=logging.INFO,
                         format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
