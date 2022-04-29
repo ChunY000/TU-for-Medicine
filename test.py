@@ -149,7 +149,7 @@ if __name__ == "__main__":
         args.vit_name='R50-ViT-B_16'
         args.vit_patches_size=16
     else:
-      UseOwn=int(input('想用哪个自己训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16 5.R152: '))
+      UseOwn=int(input('想用哪个自己训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16 5.R152 6.R50-l: '))
       if UseOwn == 2:
         args.vit_name='ViT-B_16'
       elif UseOwn == 3:
