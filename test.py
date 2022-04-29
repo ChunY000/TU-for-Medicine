@@ -120,10 +120,17 @@ if __name__ == "__main__":
 
     dataset_config = {
         'Synapse': {
-            'Dataset': Synapse_dataset,
+            'Dataset': Medicine_dataset,
             'volume_path': '/content/TransUNet/Data/Synapse/test_vol_h5',
             'list_dir': '/content/TransUNet/lists/lists_Synapse',
             'num_classes': 9,
+            'z_spacing': 1,
+        },
+        'Corona19': {
+            'Dataset': Medicine_dataset,
+            'volume_path': '/content/TransUNet/Data/Corona/test_vol_h5',
+            'list_dir': '/content/TransUNet/lists/lists_Corona',
+            'num_classes': 2,
             'z_spacing': 1,
         },
     }
