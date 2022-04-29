@@ -75,6 +75,7 @@ if __name__ == "__main__":
     elif vit_choose == 6:
       args.vit_name='R50-ViT-L_16'
       args.n_skip=3
+      args.batch_size=18
     else:
       args.n_skip=3
     print('您选择的是：',args.vit_name)
