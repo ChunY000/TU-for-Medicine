@@ -1,4 +1,2 @@
-case0017.np
-case0018.np
-case0019.np
-case0020.np
+case0009
+case0010
