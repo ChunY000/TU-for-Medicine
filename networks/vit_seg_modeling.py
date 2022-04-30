@@ -321,11 +321,11 @@ class DecoderBlock(nn.Module):
         self.up32 = nn.UpsamplingBilinear2d(scale_factor=4)
 
     def forward(self, x, skip=None,Flag32=None):
-        if Flag32:
-            x = self.up32(x)
-            print('现在用的是up32哦')
-        else:
-            x = self.up(x)
+#         if Flag32:
+#             x = self.up32(x)
+#             print('现在用的是up32哦')
+#         else:
+        x = self.up(x)
         if skip is not None:
             x = torch.cat([x, skip], dim=1)
         x = self.conv1(x)
