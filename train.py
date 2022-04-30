@@ -79,7 +79,7 @@ if __name__ == "__main__":
           args.batch_size=20
           args.max_epochs=100
       else:
-      args.batch_size=20
+          args.batch_size=20
     else:
       args.n_skip=3
     print('您选择的是：',args.vit_name)
