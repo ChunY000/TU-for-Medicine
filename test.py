@@ -72,7 +72,7 @@ def inference(args, model, test_save_path=None,Flag32=False):
         #np.mean就是对这张图的8个类求均值，所以也是这张图的均值
         logging.info('idx %d case %s mean_dice %f mean_hd95 %f' % (i_batch+1, case_name, np.mean(metric_i, axis=0)[0], np.mean(metric_i, axis=0)[1]))
         if args.GoogleUse==False:
-          vit_name='OwnTraining_{}'.format(args.vit_name)
+          vit_name='OwnTraining_{}_{}'.format(args.datasets,args.vit_name)
         else:
           vit_name=args.vit_name
         DinaryLoss_path='/content/gdrive/MyDrive/TransUnet_Chy/DinaryLoss/{}.txt'.format(vit_name)
