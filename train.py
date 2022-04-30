@@ -75,6 +75,10 @@ if __name__ == "__main__":
     elif vit_choose == 6:
       args.vit_name='R50-ViT-L_16'
       args.n_skip=3
+      if args.dataset=='Corona':
+          args.batch_size=20
+          args.max_epochs=100
+      else:
       args.batch_size=20
     else:
       args.n_skip=3
