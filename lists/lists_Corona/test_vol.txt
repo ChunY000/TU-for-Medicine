@@ -1,2 +1,5 @@
+case0006
+case0007
+case0008
 case0009
 case0010
