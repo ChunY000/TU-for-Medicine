@@ -142,6 +142,12 @@ if __name__ == "__main__":
             'num_classes': 2,
             'z_spacing': 1,
         },
+       'Tumor': {
+            'root_path': '/content/TransUNet/Data/Tumor/test_vol_h5',
+            'list_dir': '/content/TransUNet/lists/lists_Tumor',
+            'num_classes': 2,
+            'z_spacing': 1,
+        },
     }
     flag32=False
     data_choose=int(input('你想要测试什么1.Synapse 2.Corona:'))
