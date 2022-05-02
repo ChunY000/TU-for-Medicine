@@ -51,11 +51,13 @@ if __name__ == "__main__":
     else:
         cudnn.benchmark = False
         cudnn.deterministic = True    
-    data_choose=int(input('选择要训练的数据集1.Synapse 2.Corona：'))
+    data_choose=int(input('选择要训练的数据集1.Synapse 2.Corona 3.Tumor：'))
     if data_choose ==1:
       args.dataset='Synapse'
     elif data_choose ==2:
       args.dataset ='Corona'
+    elif data_choose ==3:
+      args.dataset ='Tumor'
       
     vit_choose=int(input('请选择你想要训练的模型 1.R50-vit-b_16  2.vit-b_16  3.vit-b_32  4.vit-l_16 5.R152-vit-b-16  6.R50-vit-l-16:  '))
     flag32=False
@@ -75,11 +77,8 @@ if __name__ == "__main__":
     elif vit_choose == 6:
       args.vit_name='R50-ViT-L_16'
       args.n_skip=3
-      if args.dataset=='Corona':
-          args.batch_size=20
-          args.max_epochs=100
-      else:
-          args.batch_size=20
+      args.batch_size=20
+      args.max_epochs=100
     else:
       args.n_skip=3
     print('您选择的是：',args.vit_name)
@@ -100,6 +99,11 @@ if __name__ == "__main__":
         'Corona': {
             'root_path': '/content/TransUNet/Data/Corona19/train_npz',
             'list_dir': '/content/TransUNet/lists/lists_Corona',
+            'num_classes': 2,
+        },
+      'Tumor': {
+            'root_path': '/content/TransUNet/Data/Tumor/train_npz',
+            'list_dir': '/content/TransUNet/lists/lists_Tumor',
             'num_classes': 2,
         },
     }
