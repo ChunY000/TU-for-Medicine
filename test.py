@@ -150,11 +150,13 @@ if __name__ == "__main__":
         },
     }
     flag32=False
-    data_choose=int(input('你想要测试什么1.Synapse 2.Corona:'))
+    data_choose=int(input('你想要测试什么1.Synapse 2.Corona 3.Tumor:'))
     if data_choose ==1:
       args.dataset='Synapse'
     elif data_choose ==2:
       args.dataset='Corona'
+    elif data_choose ==3:
+      args.dataset='Tumor'
     UseGoogle=input('要使用谷歌预训练模块吗？ 1.使用 2.不使用')
     UseG=int(UseGoogle)
     if UseG==1:
