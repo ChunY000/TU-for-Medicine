@@ -138,5 +138,4 @@ if __name__ == "__main__":
     net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes,argsV=args,Flag32=flag32).cuda()
     #net.load_from(weights=np.load(config_vit.pretrained_path))
 
-    trainer = {'Synapse': trainer_Medicine,'Corona': trainer_Medicine}
-    trainer[dataset_name](args, net, snapshot_path,Flag32=flag32)
+    trainer_Medicine(args, net, snapshot_path,Flag32=flag32)
