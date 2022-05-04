@@ -34,8 +34,8 @@ parser.add_argument('--list_dir', type=str,
                     default='/content/TransUNet/lists/lists_Synapse', help='list dir')
 
 parser.add_argument('--max_iterations', type=int,default=20000, help='maximum epoch number to train')
-parser.add_argument('--max_epochs', type=int, default=150, help='maximum epoch number to train')
-parser.add_argument('--batch_size', type=int, default=24,
+parser.add_argument('--max_epochs', type=int, default=100, help='maximum epoch number to train')
+parser.add_argument('--batch_size', type=int, default=42,
                     help='batch_size per gpu')
 parser.add_argument('--img_size', type=int, default=224, help='input patch size of network input')
 parser.add_argument('--is_savenii', default=False, help='whether to save results during inference')
@@ -143,7 +143,8 @@ if __name__ == "__main__":
             'z_spacing': 1,
         },
        'Tumor': {
-            'root_path': '/content/TransUNet/Data/Tumor/test_vol_h5',
+             'Dataset': Medicine_dataset,
+            'volume_path': '/content/TransUNet/Data/Tumor/test_vol_h5',
             'list_dir': '/content/TransUNet/lists/lists_Tumor',
             'num_classes': 2,
             'z_spacing': 1,
