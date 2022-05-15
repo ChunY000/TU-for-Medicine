@@ -4,7 +4,8 @@ from medpy import metric
 from scipy.ndimage import zoom
 import torch.nn as nn
 import SimpleITK as sitk
-
+from PIL import Image
+import copy
 
 class DiceLoss(nn.Module):
     def __init__(self, n_classes):
@@ -43,7 +44,52 @@ class DiceLoss(nn.Module):
             class_wise_dice.append(1.0 - dice.item())
             loss += dice * weight[i]
         return loss / self.n_classes
+def RGB(x):
+        a1 = copy.deepcopy(x) #R
+        # print(f'修改前a1的shape:{a1.shape}')
+        a2 = copy.deepcopy(x) #G
+        a3 = copy.deepcopy(x) #B
 
+        a1[a1 == 1] = 0
+        a1[a1 == 2] = 0
+        a1[a1 == 3] = 255
+        a1[a1 == 4] = 0
+        a1[a1 == 5] = 255
+        a1[a1 == 6] = 255
+        a1[a1 == 7] = 137
+        a1[a1 == 8] = 245
+
+        a2[a2 == 1] = 0
+        a2[a2 == 2] = 255
+        a2[a2 == 3] = 64
+        a2[a2 == 4] = 229
+        a2[a2 == 5] = 0
+        a2[a2 == 6] = 236
+        a2[a2 == 7] = 104
+        a2[a2 == 8] = 245
+
+        a3[a3 == 1] = 128
+        a3[a3 == 2] = 0
+        a3[a3 == 3] = 64
+        a3[a3 == 4] = 238
+        a3[a3 == 5] = 255
+        a3[a3 == 6] = 139
+        a3[a3 == 7] = 205
+        a3[a3 == 8] = 245
+
+        a1=a1.transpose([1,2,0])
+        a2=a2.transpose([1,2,0])
+        a3=a3.transpose([1,2,0])
+
+        listt=[]
+        for i in range(a1.shape[2]):
+         r = Image.fromarray(np.uint8(a1[:,:,i])).convert('L')
+         g = Image.fromarray(np.uint8(a2[:,:,i])).convert('L')
+         b = Image.fromarray(np.uint8(a3[:,:,i])).convert('L')
+         x = Image.merge('RGB', [r, g, b])
+         x = np.asarray(x)
+         listt.append(x)
+        return listt
 
 def calculate_metric_percase(pred, gt):
     pred[pred > 0] = 1
@@ -86,7 +132,6 @@ def Right(output, target):
     return (r1/(H*W*C)+(r2/s))/2
         
 
-
 def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_save_path=None, case=None, z_spacing=1,Flag=False):
     image, label = image.squeeze(0).cpu().detach().numpy(), label.squeeze(0).cpu().detach().numpy()
     if len(image.shape) == 3:
@@ -105,9 +150,9 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
                 out = out.cpu().detach().numpy()
                 #out改下大小就是prediction
                 if x != patch_size[0] or y != patch_size[1]:
-#                     if Flag==True:
-#                         pred = zoom(out, (x / 112, y / 112), order=0)
-#                     else:
+                    if Flag==True:
+                        pred = zoom(out, (x / 112, y / 112), order=0)
+                    else:
                         pred = zoom(out, (x / patch_size[0], y / patch_size[1]), order=0)
                 else:
                     pred = out
@@ -130,6 +175,7 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
     metric_list = []
     right=0.0
     #计算每张图8个类的Dice和HD95性能指标
+
     for i in range(1, classes):
         metric_list.append(calculate_metric_percase(prediction == i, label == i))
     #计算准确率
@@ -137,13 +183,22 @@ def test_single_volume(image, label, net, classes, patch_size=[256, 256], test_s
    
      
     if test_save_path is not None:
+        pred_list=RGB(prediction)
+        #pred_list里每个元素大小为(512,512,3),共有原图C个元素(图1是139个)
+        np.savez(test_save_path + '/'+ case + "_pred.npz", pred=pred_list)
+
+        
+        label_list=RGB(label)
+        #pred_list里每个元素大小为(512,512,3),共有原图C个元素(图1是139个)
+        np.savez(test_save_path + '/'+ case + "_label.npz", label=label_list)
+
         img_itk = sitk.GetImageFromArray(image.astype(np.float32))
-        prd_itk = sitk.GetImageFromArray(prediction.astype(np.float32))
-        lab_itk = sitk.GetImageFromArray(label.astype(np.float32))
+        # prd_itk = sitk.GetImageFromArray(pred_list.astype(np.float32))
+        # lab_itk = sitk.GetImageFromArray(label.astype(np.float32))
         img_itk.SetSpacing((1, 1, z_spacing))
-        prd_itk.SetSpacing((1, 1, z_spacing))
-        lab_itk.SetSpacing((1, 1, z_spacing))
-        sitk.WriteImage(prd_itk, test_save_path + '/'+case + "_pred.nii.gz")
+        # prd_itk.SetSpacing((1, 1, z_spacing))
+        # lab_itk.SetSpacing((1, 1, z_spacing))
+        # sitk.WriteImage(prd_itk, test_save_path + '/'+case + "_pred.nii.gz")
         sitk.WriteImage(img_itk, test_save_path + '/'+ case + "_img.nii.gz")
-        sitk.WriteImage(lab_itk, test_save_path + '/'+ case + "_gt.nii.gz")
+        # sitk.WriteImage(lab_itk, test_save_path + '/'+ case + "_gt.nii.gz")
     return metric_list,right
